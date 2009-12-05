@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "business_rules"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Define dynamic business rules.}
+    gem.description = %Q{Define business rules dynamically on your model objects.}
     gem.email = "joshnabbott@gmail.com"
     gem.homepage = "http://github.com/joshnabbott/business_rules"
     gem.authors = ["Josh N. Abbott"]
