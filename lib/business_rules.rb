@@ -58,7 +58,8 @@ module BusinessRules
     # And a hash where the key is the object and the value is the method being called on the object.
     def validate_business_rules(rules_type)
       self.business_rules_errors = {}
-      self.instance_eval(&self.class.business_rules[rules_type])
+      blk = self.class.business_rules[rules_type]
+      self.instance_eval(&blk)
       self.business_rules_errors.empty?
     end
   end
