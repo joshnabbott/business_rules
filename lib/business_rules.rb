@@ -1,19 +1,24 @@
+# TODO: Write documentation
 module BusinessRules
   def self.included(base)
     base.extend(ClassMethods)
-    base.include(InstanceMethods)
+    base.instance_eval { include InstanceMethods }
   end
 
   module ClassMethods
-    attr_writer :business_rules_errors
-
     def define_business_rules_for(name, &block)
-      @@business_rules ||= {}
-      @@business_rules[name] = block
+      @business_rules ||= {}
+      @business_rules[name] = block
+    end
+
+    def business_rules
+      @business_rules
     end
   end
 
   module InstanceMethods
+    attr_writer :business_rules_errors
+
     def business_rule(name, message = 'is invalid.', &block)
       returning yield do |value|
         self.business_rules_errors.merge!({name => message}) unless value
@@ -35,7 +40,7 @@ module BusinessRules
         super
       rescue
         method_name = method_id.to_s.gsub(/\?/,'')
-        if @@business_rules.key?(method_name.to_sym)
+        if self.class.business_rules.key?(method_name.to_sym)
           self.instance_eval <<-CODE
             def #{method_name}
               @#{method_name} ||= validate_business_rules(:"#{method_name}")
@@ -53,8 +58,9 @@ module BusinessRules
     # And a hash where the key is the object and the value is the method being called on the object.
     def validate_business_rules(rules_type)
       self.business_rules_errors = {}
-      self.instance_eval(&@@business_rules[rules_type])
+      self.instance_eval(&self.class.business_rules[rules_type])
       self.business_rules_errors.empty?
     end
   end
 end
+ActiveRecord::Base.instance_eval { include BusinessRules }
