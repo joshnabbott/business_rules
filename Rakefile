@@ -10,7 +10,7 @@ begin
     gem.email = "joshnabbott@gmail.com"
     gem.homepage = "http://github.com/joshnabbott/business_rules"
     gem.authors = ["Josh N. Abbott"]
-    gem.add_development_dependency "rspec", ">= 1.2.9"
+    gem.add_development_dependency "rspec", ">= 1.2.8"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 rescue LoadError

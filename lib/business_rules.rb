@@ -63,4 +63,3 @@ module BusinessRules
     end
   end
 end
-ActiveRecord::Base.instance_eval { include BusinessRules }
