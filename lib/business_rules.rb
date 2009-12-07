@@ -21,8 +21,10 @@ module BusinessRules
 
     def business_rule(name, message = 'is invalid.', &block)
       returning yield do |value|
-        self.business_rules_errors[name] ||= []
-        self.business_rules_errors[name] << message unless value
+        unless value
+          self.business_rules_errors[name] ||= []
+          self.business_rules_errors[name] << message
+        end
       end
     end
 
