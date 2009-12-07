@@ -21,15 +21,11 @@ module BusinessRules
 
     def business_rule(name, message = 'is invalid.', &block)
       returning yield do |value|
-        self.business_rules_errors.merge!({name => message}) unless value
+        self.business_rules_errors[name] ||= []
+        self.business_rules_errors[name] << message unless value
       end
     end
 
-    # A hash of hashes of business rule errors.
-    # Currently the hash gets populated with errors when +can_display+ or +can_sell+ gets called on a Upc object and it returns false.
-    # You can see all errors with <tt>@upc.business_rules_errors</tt>
-    # Or you could simply type <tt>@upc.business_rules_errors[:can_display]</tt> to find out why a Upc returns false for +can_display+ or
-    # <tt>@upc.business_rules_errors[:can_sell]</tt> to find out why a Upc returns false for +can_sell+.
     def business_rules_errors(reload = false)
       @business_rules_errors = nil if reload
       @business_rules_errors ||= {}
@@ -57,9 +53,10 @@ module BusinessRules
     # This method accepts two parameters: a name for the type of business rules being validated (used for the business_rules_errors hash)
     # And a hash where the key is the object and the value is the method being called on the object.
     def validate_business_rules(rules_type)
-      self.business_rules_errors = {}
+      self.business_rules_errors = nil
       blk = self.class.business_rules[rules_type]
       self.instance_eval(&blk)
+
       self.business_rules_errors.empty?
     end
   end
