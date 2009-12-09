@@ -38,7 +38,7 @@ module BusinessRules
         super
       rescue
         method_name = method_id.to_s.gsub(/\?/,'')
-        if self.class.business_rules.key?(method_name.to_sym)
+        if self.class.business_rules && self.class.business_rules.has_key?(method_name.to_sym)
           self.instance_eval <<-CODE
             def #{method_name}
               @#{method_name} ||= validate_business_rules(:"#{method_name}")
