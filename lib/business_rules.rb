@@ -1,4 +1,4 @@
-# TODO: Write documentation
+# TODO: Write documentation and tests
 module BusinessRules
   def self.included(base)
     base.extend(ClassMethods)
@@ -6,13 +6,23 @@ module BusinessRules
   end
 
   module ClassMethods
-    def define_business_rules_for(name, &block)
+    def business_rules
       @business_rules ||= {}
-      @business_rules[name] = block
     end
 
-    def business_rules
-      @business_rules
+    def define_business_rules_for(name, &block)
+      business_rules[name] = block
+
+      self.business_rules.keys.each do |method_id|
+        method_name = method_id.to_s.gsub(/\?/,'')
+        self.class_eval <<-CODE
+          def #{method_name}(reload=false)
+            @#{method_name} = nil if reload
+            @#{method_name} ||= validate_business_rules(:"#{method_name}")
+          end
+          alias_method :"#{method_name}?", :"#{method_name}"
+        CODE
+      end
     end
   end
 
@@ -31,24 +41,6 @@ module BusinessRules
     def business_rules_errors(reload = false)
       @business_rules_errors = nil if reload
       @business_rules_errors ||= {}
-    end
-
-    def method_missing(method_id, *args)
-      begin
-        super
-      rescue
-        method_name = method_id.to_s.gsub(/\?/,'')
-        if self.class.business_rules && self.class.business_rules.has_key?(method_name.to_sym)
-          self.instance_eval <<-CODE
-            def #{method_name}
-              @#{method_name} ||= validate_business_rules(:"#{method_name}")
-            end
-          CODE
-          self.instance_eval(method_name)
-        else
-          super
-        end
-      end
     end
 
   protected
