@@ -30,11 +30,16 @@ module BusinessRules
     attr_writer :business_rules_errors
 
     def business_rule(name, message = 'is invalid.', &block)
-      returning yield do |value|
-        unless value
-          self.business_rules_errors[name] ||= []
-          self.business_rules_errors[name] << message
+      begin
+        returning yield do |value|
+          unless value
+            self.business_rules_errors[name] ||= []
+            self.business_rules_errors[name] << message
+          end
         end
+      rescue Exception => e
+        self.business_rules_errors[name] ||= []
+        self.business_rules_errors[name] << message
       end
     end
 
