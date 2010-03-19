@@ -2,7 +2,6 @@
 module BusinessRules
   def self.included(base)
     base.extend(ClassMethods)
-    base.instance_eval { include InstanceMethods }
   end
 
   module ClassMethods
@@ -11,6 +10,8 @@ module BusinessRules
     end
 
     def define_business_rules_for(name, &block)
+      self.class_eval { include InstanceMethods }
+
       business_rules[name] = block
 
       self.business_rules.keys.each do |method_id|

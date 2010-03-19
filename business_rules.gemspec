@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{business_rules}
-  s.version = "0.0.7"
+  s.version = "0.0.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Josh N. Abbott"]
-  s.date = %q{2010-03-18}
+  s.date = %q{2010-03-19}
   s.description = %q{Define business rules dynamically on your model objects.}
   s.email = %q{joshnabbott@gmail.com}
   s.extra_rdoc_files = [
